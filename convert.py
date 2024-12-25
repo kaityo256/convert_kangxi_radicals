@@ -1,19 +1,21 @@
 import pyperclip
 import time
+import argparse
 
 
-def monitor_clipboad():
+def monitor_clipboad(args):
+    print("クリップボードの監視を開始します。終了するにはCtr+Cを押してください。")
     data_dic = load_data()
-    last_content = ""
+    last_content = pyperclip.paste()
     while True:
         try:
             current_content = pyperclip.paste()
             if current_content != last_content:
                 last_content = current_content
-                check(current_content, data_dic, verbose=True)
+                check(current_content, data_dic, verbose=args.verbose)
         except Exception as e:
             print(f"Error: {e}")
-        time.sleep(0.5)
+        time.sleep(0.1)
 
 
 def load_data():
@@ -41,13 +43,22 @@ def check(str, data_dic, verbose=True):
         else:
             print_str += c
             converted_str += c
-    if verbose and found:
-        print(print_str)
-        print(converted_str)
+    if found:
+        pyperclip.copy(converted_str)
+        if verbose:
+            print(print_str)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="クリップボードを監視し、康煕部首を変換する"
+    )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Enable verbose output"
+    )
+    args = parser.parse_args()
+    monitor_clipboad(args)
 
 
 if __name__ == "__main__":
-
-    # check("テキスト中の康煕部首を⾒つけてCJK漢字に変換します。", data_dic, verbose=True)
-    print("クリップボードの監視を開始します。終了するにはCtr+Cを押してください。")
-    monitor_clipboad()
+    main()
