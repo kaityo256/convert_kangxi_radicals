@@ -6,7 +6,10 @@ import argparse
 def monitor_clipboad(args):
     print("クリップボードの監視を開始します。終了するにはCtr+Cを押してください。")
     data_dic = load_data()
-    last_content = pyperclip.paste()
+    if pyperclip.paste() is None:
+        last_content = ""
+    else:
+        last_content = pyperclip.paste()
     while True:
         try:
             current_content = pyperclip.paste()
@@ -30,6 +33,8 @@ def load_data():
 
 
 def check(str, data_dic, verbose=True):
+    if str is None:
+        return
     RED = "\033[31m"  # 赤
     RESET = "\033[0m"  # リセット
     converted_str = ""
